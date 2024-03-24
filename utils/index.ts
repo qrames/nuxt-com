@@ -7,10 +7,10 @@ type FormatMonetaireOptions = {
 };
 
 export function formatMonetaire(montant: number, option?: FormatMonetaireOptions ): string {
-    if (option) {
-        return montant.toLocaleString(option.locale, option.options)
-    }
-    return montant.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })
+  if (option) {
+    return montant.toLocaleString(option.locale, option.options)
+  }
+  return montant.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })
 }
 
 
