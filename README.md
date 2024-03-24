@@ -74,4 +74,4 @@ bun run preview
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
 Check out the [nuxt UI documentation](https://ui.nuxt.com/components/accordion) for more information.
-Check out the [icom by iconify design](https://icones.js.org/) for find your icom.
+Check out the [icon by iconify design](https://icones.js.org/) for find your icon.
