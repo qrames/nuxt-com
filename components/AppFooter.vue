@@ -1,0 +1,3 @@
+<template>
+    © Quentin Rames
+</template>
