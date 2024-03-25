@@ -6,7 +6,8 @@ import { locally } from '@/utils/locally'
 //import Swal from 'sweetalert2'
 //import { apiRest } from '@/server/api'
 
-type ItemProduct = {
+type DataProduct = {
+  //api original data
   id: number
 
   name: string
@@ -17,6 +18,9 @@ type ItemProduct = {
   get_image: string
   get_thumbnail: string
 
+}
+
+type ItemProduct = DataProduct & {
   quantity: number
 }
 
@@ -95,6 +99,13 @@ export const useCartStore = defineStore('cart', () => {
     cart.value = cart.value.filter((index) => ids.includes(index.id))
 
   }
+  // Chang Type : add quantity in item
+  function createItemProduct(dataProduct: DataProduct, quantity: number): ItemProduct {
+    return {
+      ...dataProduct,
+      quantity,
+    };
+  }
 
   //ACTION function 
   function initCart(){
@@ -117,7 +128,7 @@ export const useCartStore = defineStore('cart', () => {
     locally.setItem('token', token.value)
   }
 
-  function addItem(item: ItemProduct) {
+  function addItem(item: DataProduct | ItemProduct) {
 
     // itemInCart is a array
     // the first element itemInCart[0] is a proxy
@@ -127,13 +138,12 @@ export const useCartStore = defineStore('cart', () => {
     if (myProduct) {
       myProduct.quantity ++
     } else {
-      item.quantity = 1
-      cart.value.push(item)
+      cart.value.push(createItemProduct(item, 1))
     }
     setLocalStorageCart()
   }
 
-  function subtractItem(item: ItemProduct) {
+  function subtractItem(item: DataProduct) {
 
     cleanCart()
 
