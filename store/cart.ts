@@ -10,8 +10,6 @@ import { locally } from '@/utils/locally'
 
 export const useCartStore = defineStore('cart', () => {
   const cart = ref<Array<ItemProduct>>([])
-  const isLoading = ref(false)
-  const token = ref('')
 
   function $reset() {
     cart.value = []
@@ -22,7 +20,6 @@ export const useCartStore = defineStore('cart', () => {
   const getPrice = computed(() => (id: number) => formatMonetaire(totalProduct(id)))
   const getTotal = computed(() => formatMonetaire(totalAll()))
   const getLength = computed(() => cart.value.length)
-  const Authenticated = computed(() =>  token.value != ''  && token.value != undefined)
 
   //my local function
   function filterIdProduct<ItemProduct>(id: number){
@@ -94,8 +91,6 @@ export const useCartStore = defineStore('cart', () => {
   function initCart(){
     const local = locally.getItem('cart')
 
-    token.value = locally.getItem('token') || ''
-
     if(local) {
       if (JSON.parse(local)._value.length > 0) {
         for (const item of JSON.parse(local)._value){
@@ -105,11 +100,7 @@ export const useCartStore = defineStore('cart', () => {
     } else setLocalStorageCart()
   }
 
-  function setToken(new_token: string){
-    //apiRest.defaults.headers.common["Authorization"] = new_token != ''  && new_token != undefined ? "Token " + new_token : ''
-    token.value = new_token != undefined ? new_token : ''
-    locally.setItem('token', token.value)
-  }
+
 
   function addItem(item: DataProduct | ItemProduct) {
 
@@ -166,8 +157,6 @@ export const useCartStore = defineStore('cart', () => {
   return {
     Authenticated,
     cart,
-    //isLoading,
-    setToken,    
     addItem,
     subtractItem,
     initCart,
