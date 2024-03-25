@@ -6,23 +6,6 @@ import { locally } from '@/utils/locally'
 //import Swal from 'sweetalert2'
 //import { apiRest } from '@/server/api'
 
-type DataProduct = {
-  //api original data
-  id: number
-
-  name: string
-  get_absolute_url: string
-  description: string
-  price: number
-
-  get_image: string
-  get_thumbnail: string
-
-}
-
-type ItemProduct = DataProduct & {
-  quantity: number
-}
 
 
 export const useCartStore = defineStore('cart', () => {
