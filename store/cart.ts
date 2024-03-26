@@ -155,7 +155,6 @@ export const useCartStore = defineStore('cart', () => {
   
 
   return {
-    Authenticated,
     cart,
     addItem,
     subtractItem,
