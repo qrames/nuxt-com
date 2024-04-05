@@ -12,6 +12,7 @@
   "dependencies": {
     "@nuxt/ui": "^2.14.2",
     "flowbite": "^2.3.0",
+    "jose": "^5.2.3",
     "nuxt": "^3.11.1",
     "pinia": "^2.1.7",
     "vue": "^3.4.21",
