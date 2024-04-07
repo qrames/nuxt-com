@@ -48,14 +48,6 @@ export const useAuthStore = defineStore('auth', () => {
       }
     })
     .then(data => {
-      console.log('data')
-      console.log(data)
-      console.log(data)
-      console.log(data)
-      console.log(data)
-      console.log(data)
-      console.log(data)
-      console.log('data')
       if (data.success) {
         return data.key // Renvoyer la clé du CAPTCHA
       } else {
@@ -77,9 +69,7 @@ export const useAuthStore = defineStore('auth', () => {
       // Token has expired or null
       console.log("Étape 1 : Vérifier le CAPTCHA")
       if (captchaResponse) {
-        console.log(captchaResponse)
         _captchaKeyJWT = await verifyCaptcha(email, captchaResponse)
-        console.log(_captchaKeyJWT)
         // Si la vérification du CAPTCHA échoue, arrêtez la fonction
         // verifyCaptcha() = undefined 
         if (!_captchaKeyJWT) {
@@ -91,9 +81,7 @@ export const useAuthStore = defineStore('auth', () => {
         return { status: 'error', message: 'CAPTCHA has expired', errorType: 'captcha_expired' }
       }
     }
-    console.log("Étape 2 : Effectuer la requête de login")
     console.log(_captchaKeyJWT)
-    console.log('?')
     // Étape 2 : Effectuer la requête de login
     // Seulement si nous avons une clé de CAPTCHA valide
     let result = await $fetch( BaseURL + '/authToken/token/login/', {
@@ -102,7 +90,7 @@ export const useAuthStore = defineStore('auth', () => {
         'Content-Type': 'application/json'
       },
       'body': {
-        "username": email,
+        "email": email,
         "password": password,
         "captchaKey": _captchaKeyJWT // Inclure la clé du CAPTCHA dans la requête
       }
@@ -113,7 +101,7 @@ export const useAuthStore = defineStore('auth', () => {
       return { status: 'success', message: 'Success AuthToken' } // Renvoyer un objet en cas de succès
     })
     .catch(async error => {
-      const errorData = await error.json() // Convertir le corps de l'erreur en JSON
+      const errorData = error //await error.json() // Convertir le corps de l'erreur en JSON
       return { status: 'error', message: errorData, errorType: 'login_failed' } // Renvoyer un objet en cas d'erreur
     })
     return result
