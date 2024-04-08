@@ -85,14 +85,14 @@ export const useAuthStore = defineStore('auth', () => {
     // Étape 2 : Effectuer la requête de login
     // Seulement si nous avons une clé de CAPTCHA valide
     let result = await $fetch( BaseURL + '/authToken/token/login/', {
-      'method': 'Post',
-      'headers': {
+      method: 'POST',
+      headers: {
         'Content-Type': 'application/json'
       },
-      'body': {
-        "email": email,
-        "password": password,
-        "captchaKey": _captchaKeyJWT // Inclure la clé du CAPTCHA dans la requête
+      body: {
+        email: email,
+        password: password,
+        captchaKey: _captchaKeyJWT // Inclure la clé du CAPTCHA dans la requête
       }
     })
     .then((value) => {
