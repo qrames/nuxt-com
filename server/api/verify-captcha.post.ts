@@ -28,11 +28,11 @@ interface ReshCaptcha {
   "score_reason"?: string[]
 }
 
-function generateToken(userEmail: string, expiration: string): Promise<string> {
-  let expirationDate = new Date('2024-04-04T14:25:00.889Z');
+function generateToken(userEmail: string, ip: string, expiration: string): Promise<string> {
+  let expirationDate = new Date(expiration);
   let expirationTime = Math.floor(expirationDate.getTime() / 1000);
 
-  return new jose.SignJWT({ userEmail })// crée un nouveau JWT avec le userEmail comme payload.
+  return new jose.SignJWT({ 'userEmail': userEmail, 'ip': ip })// crée un nouveau JWT avec le userEmail comme payload.
   .setProtectedHeader({ alg: 'HS256' })// définit l’algorithme utilisé pour signer le token comme étant ‘HS256’.
   .setIssuedAt()// définit la date et l’heure d’émission du token à l’heure actuelle.
   .setExpirationTime(expirationTime)// définit la date et l’heure d’expiration du token à la valeur spécifiée par expiration.
@@ -42,9 +42,9 @@ function generateToken(userEmail: string, expiration: string): Promise<string> {
 
 export default defineEventHandler(async (event) => {
   const body: Body = await readBody(event)
+  
   // Récupérez le token à partir des données POST avec la clé 'h-captcha-response'.
   const response: string = body.captchaResponse
-  const email: string = body.userEmail
 
   // Construisez le payload avec la clé secrète et le token.
   //let data: { secret: string | undefined, response: string } = { 'secret': process.env.SECRET_KEY_HCAPTCHAT, 'response': response }
@@ -63,7 +63,17 @@ export default defineEventHandler(async (event) => {
     })
     if (res && res['success']) {
       // Le CAPTCHA a été vérifié avec succès.
-      const token = await generateToken(email, res['challenge_ts'])
+      const email: string = body.userEmail
+      const client_ip: string = event?.node?.req.headers['host'].split(':')[0] ?? 'no host'
+      const client_User_Agent: string | string[] = event?.node?.req.headers['user-agent'] ?? 'no User-Agent'
+      let client_data = [client_ip, client_User_Agent]
+      console.log(client_data)
+      console.log(event.node.req.headers['x-forwarded-for'])
+      console.log(event.node.req.headers['x-forwarded-for'])
+      console.log(event.node.req.headers['x-forwarded-for'])
+      //console.log(event?.node?.req.headers['user-agent'])
+      console.log(event?.node?.req.headers)
+      const token = await generateToken(email, client_ip, res['challenge_ts'])
       apiResponse = {success: true, key: token}
     } else if (res && !res['success'] && res['error-codes']) {
       // Le CAPTCHA a été vérifié avec succès.
