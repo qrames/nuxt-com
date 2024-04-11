@@ -7,7 +7,7 @@ export const useAuthStore = defineStore('auth', () => {
   const _token = ref('')
   const user = ref('')
 
-  let _captchaKeyJWT = undefined
+  let _captchaKeyJWT = ref(undefined)
   let _headers = {
     'Authorization': `Token ${_token.value}`,
     'Accept': 'application/json',
@@ -25,15 +25,15 @@ export const useAuthStore = defineStore('auth', () => {
 
     var decodedToken = JSON.parse(jsonPayload)
     var expirationDate = new Date(decodedToken.exp * 1000)
-
-    return expirationDate < new Date()
+    
+    return expirationDate.getTime() > (new Date()).getTime()
   }
 
   const valideCaptcha = computed(() => {
-    if (!_captchaKeyJWT){
+    if (!_captchaKeyJWT.value){
       return false
     }
-    return isTokenExpired(_captchaKeyJWT)
+    return isTokenExpired(_captchaKeyJWT.value)
   })
 
   async function verifyCaptcha(email, captchaResponse){
@@ -65,14 +65,15 @@ export const useAuthStore = defineStore('auth', () => {
   const logIn = async (email, password, captchaResponse) => {
 
     if (!valideCaptcha.value) {
+      _captchaKeyJWT.value = undefined
       // Étape 1 : Vérifier le CAPTCHA
       // Token has expired or null
       console.log("Étape 1 : Vérifier le CAPTCHA")
       if (captchaResponse) {
-        _captchaKeyJWT = await verifyCaptcha(email, captchaResponse)
+        _captchaKeyJWT.value = await verifyCaptcha(email, captchaResponse)
         // Si la vérification du CAPTCHA échoue, arrêtez la fonction
         // verifyCaptcha() = undefined 
-        if (!_captchaKeyJWT) {
+        if (!_captchaKeyJWT.value) {
           return { status: 'error', message: 'CAPTCHA verification failed', errorType: 'captcha_verification_failed' }
         }
       } else {
@@ -81,7 +82,7 @@ export const useAuthStore = defineStore('auth', () => {
         return { status: 'error', message: 'CAPTCHA has expired', errorType: 'captcha_expired' }
       }
     }
-    console.log(_captchaKeyJWT)
+
     // Étape 2 : Effectuer la requête de login
     // Seulement si nous avons une clé de CAPTCHA valide
     let result = await $fetch( BaseURL + '/authToken/token/login/', {
@@ -92,7 +93,7 @@ export const useAuthStore = defineStore('auth', () => {
       body: {
         email: email,
         password: password,
-        captchaKey: _captchaKeyJWT // Inclure la clé du CAPTCHA dans la requête
+        captchaKey: _captchaKeyJWT.value // Inclure la clé du CAPTCHA dans la requête
       }
     })
     .then((value) => {
