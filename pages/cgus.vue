@@ -1,0 +1,3 @@
+<template>
+    <CGU></CGU>
+</template>
